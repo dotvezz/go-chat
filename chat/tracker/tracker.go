@@ -26,7 +26,6 @@ func (t *tracker) Connect(conn chat.Connection) {
 			fmt.Println("Client Disconnected")
 			return
 		}
-		fmt.Println("Message Received")
 		t.messages <- m
 	}
 }
