@@ -7,13 +7,13 @@ import (
 
 func New() chat.Tracker {
 	return &tracker{
-		messages: make(chan chat.Message),
+		messages:    make(chan chat.Message),
 		connections: make([]chat.Connection, 0),
 	}
 }
 
 type tracker struct {
-	messages chan chat.Message
+	messages    chan chat.Message
 	connections []chat.Connection
 }
 
@@ -32,7 +32,7 @@ func (t *tracker) Connect(conn chat.Connection) {
 
 func (t *tracker) Start() {
 	for {
-		message := <- t.messages
+		message := <-t.messages
 		for _, conn := range t.connections {
 			conn.Send(message)
 		}

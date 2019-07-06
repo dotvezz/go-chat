@@ -26,7 +26,7 @@ func (c *connection) Send(m chat.Message) {
 
 func (c *connection) Receive() (m chat.Message, err error) {
 	bs := make([]byte, maxMessageLength)
-	read:
+read:
 	length, err := c.conn.Read(bs)
 
 	if err != nil {
