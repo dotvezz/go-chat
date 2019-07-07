@@ -28,15 +28,17 @@ type tracker struct {
 // Subscribes the connection to the message channel
 func (t *tracker) Connect(conn chat.Connection) {
 	t.connections = append(t.connections, conn)
-	for {
-		m, err := conn.Receive()
-		if err != nil {
-			conn.Close()
-			return
+	go func() {
+		for {
+			m, err := conn.Receive()
+			if err != nil {
+				conn.Close()
+				return
+			}
+			m.TimeStamp = t.timeStamp()
+			t.messages <- m
 		}
-		m.TimeStamp = t.timeStamp()
-		t.messages <- m
-	}
+	}()
 }
 
 // start begins the goroutine that listens to the message channel and sends

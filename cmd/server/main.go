@@ -34,7 +34,7 @@ func main() {
 
 	for {
 		c, _ := l.Accept()
-		go tr.Connect(connection.New(c))
+		tr.Connect(connection.New(c))
 	}
 }
 
