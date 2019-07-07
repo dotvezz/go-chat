@@ -8,26 +8,31 @@ import (
 
 const maxMessageLength = 1 << 8
 
+// New builds and returns a Connection around a net.Conn
 func New(c net.Conn) chat.Connection {
 	conn := new(connection)
-	conn.conn = c
+	conn.socket = c
 	return conn
 }
 
 type connection struct {
 	userName string
-	conn     net.Conn
+	socket   net.Conn
 }
 
-func (c *connection) Send(m chat.Message) {
-	mjson, _ := json.Marshal(m)
-	_, _ = c.conn.Write(mjson)
+func (c *connection) Send(m chat.Message) error {
+	mjson, err := json.Marshal(m)
+	if err != nil {
+		return err
+	}
+	_, err = c.socket.Write(mjson)
+	return err
 }
 
 func (c *connection) Receive() (m chat.Message, err error) {
-	bs := make([]byte, maxMessageLength)
 read:
-	length, err := c.conn.Read(bs)
+	bs := make([]byte, maxMessageLength)
+	length, err := c.socket.Read(bs)
 
 	if err != nil {
 		return
@@ -39,8 +44,13 @@ read:
 	}
 
 	// Ignore messages with empty body
-	if len(m.Body) == 0 {
+	if m.Body == "" {
 		goto read
 	}
+
 	return
+}
+
+func (c *connection) Close() {
+	_ = c.socket.Close()
 }

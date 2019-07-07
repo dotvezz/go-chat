@@ -1,40 +1,64 @@
 package tracker
 
 import (
-	"fmt"
 	"github.com/dotvezz/gochat/chat"
+	"log"
 )
 
-func New() chat.Tracker {
-	return &tracker{
+// New builds and returns an implementation of the chat.Tracker interface
+func New(timeStampProvider func() int64, logger *log.Logger) chat.Tracker {
+	tr := &tracker{
+		logger:      logger,
+		timeStamp:   timeStampProvider,
 		messages:    make(chan chat.Message),
 		connections: make([]chat.Connection, 0),
 	}
+	tr.start()
+	return tr
 }
 
+// tracker is the private implementation of the public chat.Tracker interface
 type tracker struct {
+	logger      *log.Logger
+	timeStamp   func() int64
 	messages    chan chat.Message
 	connections []chat.Connection
 }
 
+// Subscribes the connection to the message channel
 func (t *tracker) Connect(conn chat.Connection) {
-	fmt.Println("Client Connected")
 	t.connections = append(t.connections, conn)
 	for {
 		m, err := conn.Receive()
 		if err != nil {
-			fmt.Println("Client Disconnected")
+			conn.Close()
 			return
 		}
+		m.TimeStamp = t.timeStamp()
 		t.messages <- m
 	}
 }
 
-func (t *tracker) Start() {
-	for {
-		message := <-t.messages
-		for _, conn := range t.connections {
-			conn.Send(message)
+// start begins the goroutine that listens to the message channel and sends
+// messages to connections
+func (t *tracker) start() {
+	go func() {
+		for {
+			message := <-t.messages
+			t.logger.Printf("%s,%s,%d,%s", message.From, message.To, message.TimeStamp, message.Body)
+			deadConnections := make([]int, 0)
+			for i, conn := range t.connections {
+				if err := conn.Send(message); err != nil {
+					// If a Send returns an error, just super-aggressively flag it to be disconnected and removed
+					deadConnections = append(deadConnections, i)
+				}
+			}
+
+			// For flagged dead connections, kill without remorse
+			for _, i := range deadConnections {
+				t.connections[i].Close()
+				t.connections = append(t.connections[:i], t.connections[i+1:]...)
+			}
 		}
-	}
+	}()
 }
