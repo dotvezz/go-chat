@@ -1,7 +1,7 @@
 package main
 
 import (
-	"flag"
+	"github.com/dotvezz/gochat/chat"
 	"github.com/dotvezz/gochat/chat/connection"
 	"github.com/dotvezz/gochat/chat/server/config"
 	"github.com/dotvezz/gochat/chat/tracker"
@@ -12,28 +12,32 @@ import (
 )
 
 func main() {
-	// Parse flags used
-	flag.Parse()
+	// Load the configuration
+	conf := config.New()
+	chat.LoadConfig(&conf)
 
-	conf := config.Load()
-
+	// Prepare the logger. Attempt to create a log file if the specified file doesn't exist
+	var logger *log.Logger
 	logFile, err := os.OpenFile(conf.LogFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer logFile.Close()
+	logger = log.New(logFile, "", 0)
 
-	logger := log.New(logFile, "", 0)
-	l, err := net.Listen("tcp", conf.Port)
+	// Prepare the listener for connections on the configured port
+	listener, err := net.Listen("tcp", conf.Port)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer l.Close()
+	defer listener.Close()
 
+	// Load the tracker that handles messages
 	tr := tracker.New(timeStampProvider, logger)
 
+	// Listen for connections and send them to the tracker
 	for {
-		c, _ := l.Accept()
+		c, _ := listener.Accept()
 		tr.Connect(connection.New(c))
 	}
 }

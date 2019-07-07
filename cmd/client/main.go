@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/dotvezz/gochat/chat"
+	"github.com/dotvezz/gochat/chat/client/config"
 	"github.com/dotvezz/gochat/chat/connection"
 	"github.com/marcusolsson/tui-go"
 	"log"
@@ -11,27 +12,40 @@ import (
 )
 
 func main() {
-	nc, err := net.Dial("tcp", "localhost:1026")
+	// Load the configuration
+	conf := config.New()
+	chat.LoadConfig(&conf)
+
+	// Connect to the server
+	nc, err := net.Dial("tcp", fmt.Sprintf("%s%s", conf.Host, conf.Port))
 	if err != nil {
-		_, _ = fmt.Fprintln(os.Stderr, err)
-		return
+		log.Fatal(err)
 	}
+
+	// Set the connection
 	conn := connection.New(nc)
 
-	myName := new(string)
+	// Initialize the TUI
 	input, chatView, ui := initTUI()
+
+	// Build the submit handler, injecting the Input, name pointer, and Connection
+	myName := new(string)
 	handleSubmit := initSubmitHandler(input, myName, conn)
+	// Set the submit handler
 	input.OnSubmit(handleSubmit)
 
+	// Initialize the listner, injecting the Connection and TUI elements
 	listen := initMessageListener(conn, chatView, ui)
+	// Listen
 	go listen()
 
 	err = ui.Run()
 	if err != nil {
-		_, _ = fmt.Fprintln(os.Stderr, err)
+		log.Fatal(err)
 	}
 }
 
+// Initialize the handler function for the input's Submit action
 func initSubmitHandler(input *tui.Entry, myName *string, conn chat.Connection) func(e *tui.Entry) {
 	return func(e *tui.Entry) {
 		m := chat.Message{
@@ -44,6 +58,7 @@ func initSubmitHandler(input *tui.Entry, myName *string, conn chat.Connection) f
 	}
 }
 
+// Initialize the listener function
 func initMessageListener(conn chat.Connection, chatView *tui.Box, ui tui.UI) func() {
 	return func() {
 		for {
@@ -60,6 +75,7 @@ func initMessageListener(conn chat.Connection, chatView *tui.Box, ui tui.UI) fun
 	}
 }
 
+// Initialize the TUI
 func initTUI() (*tui.Entry, *tui.Box, tui.UI) {
 	input := tui.NewEntry()
 	chatView := tui.NewVBox()
