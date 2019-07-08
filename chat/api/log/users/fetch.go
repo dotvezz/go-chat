@@ -24,7 +24,7 @@ func FetchOne(logFilePath string) FetchUser {
 	return func(userName string) (User, error) {
 		var sc *bufio.Scanner
 		{
-			logFile, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_RDONLY, 0)
+			logFile, err := os.OpenFile(logFilePath, os.O_RDONLY, 0)
 			if err != nil {
 				return User{}, err
 			}
@@ -53,7 +53,7 @@ func FetchAll(logFilePath string) FetchAllUsers {
 	return func() ([]User, error) {
 		var sc *bufio.Scanner
 		{
-			logFile, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_RDONLY, 0)
+			logFile, err := os.OpenFile(logFilePath, os.O_RDONLY, 0)
 			if err != nil {
 				return make([]User, 0), err
 			}

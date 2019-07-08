@@ -19,7 +19,7 @@ func main() {
 
 	// Prepare the logger. Attempt to create a log file if the specified file doesn't exist
 	var logger *log.Logger
-	logFile, err := os.OpenFile(conf.LogFile, os.O_CREATE|os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+	logFile, err := os.OpenFile(conf.LogFile, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -29,7 +29,7 @@ func FetchOne(logFilePath string) FetchMessage {
 	return func(targetLine int) (Message, error) {
 		var sc *bufio.Scanner
 		{
-			logFile, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_RDONLY, 0)
+			logFile, err := os.OpenFile(logFilePath, os.O_RDONLY, 0)
 			if err != nil {
 				return Message{}, err
 			}
@@ -71,7 +71,7 @@ func FetchN(logFilePath string) FetchNMessages {
 	return func(start, length int) ([]Message, error) {
 		var sc *bufio.Scanner
 		{
-			logFile, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_RDONLY, 0)
+			logFile, err := os.OpenFile(logFilePath, os.O_RDONLY, 0)
 			if err != nil {
 				return make([]Message, 0), err
 			}
@@ -114,7 +114,7 @@ func FetchNBySender(logFilePath string) FetchNByUsername {
 	return func(username string, start, length int) ([]Message, error) {
 		var sc *bufio.Scanner
 		{
-			logFile, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_RDONLY, 0)
+			logFile, err := os.OpenFile(logFilePath, os.O_RDONLY, 0)
 			if err != nil {
 				return make([]Message, 0), err
 			}

@@ -10,7 +10,7 @@ func New(logFilePath string) chat.RestAPI {
 	router := mux.NewRouter()
 
 	for _, endpoint := range initRoutes(logFilePath) {
-		router.Get(endpoint.path).Handler(endpoint.handler)
+		router.HandleFunc(endpoint.path, endpoint.handler)
 	}
 
 	return &restAPI{

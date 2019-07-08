@@ -9,6 +9,7 @@ import (
 	"log"
 	"net"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -75,7 +76,14 @@ func initMessageListener(conn chat.Connection, chatView *tui.Box, ui tui.UI) fun
 				log.Fatal("disconnected:", err)
 			}
 
-			chatView.Append(tui.NewLabel(fmt.Sprintf(" %s: %s", m.From, m.Body)))
+			chatView.Append(tui.NewLabel(
+				fmt.Sprintf(
+					"%s | %s: %s",
+					time.Unix(m.TimeStamp, 0).Format("2006-01-02 3:04:05"),
+					m.From,
+					m.Body,
+				),
+			))
 			ui.Repaint() // Repaint to show the new stuff in the chat view
 			ui.Repaint() // but twice because it seems to make tui freak out less often
 		}
