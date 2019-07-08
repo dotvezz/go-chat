@@ -6,6 +6,7 @@ type Message struct {
 	Data struct {
 		From string
 		To   string
+		Body string
 	}
 	Hypermedia struct {
 		Self      string

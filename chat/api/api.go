@@ -23,5 +23,5 @@ type restAPI struct {
 }
 
 func (api *restAPI) ListenAndServe(addr string) {
-	go http.Handle("/", api.router)
+	go http.ListenAndServe(addr, api.router)
 }

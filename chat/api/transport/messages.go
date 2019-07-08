@@ -125,6 +125,7 @@ func buildMessageResource(m messages.Message) Message {
 	mr.ID = m.ID
 	mr.Data.From = m.From
 	mr.Data.To = m.To
+	mr.Data.Body = m.Body
 	mr.Hypermedia.Self = urls.GetMessage(m.ID)
 	mr.Hypermedia.Recipient = urls.GetUser(m.To)
 	mr.Hypermedia.Sender = urls.GetUser(m.From)
