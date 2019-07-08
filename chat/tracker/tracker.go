@@ -1,6 +1,7 @@
 package tracker
 
 import (
+	"encoding/json"
 	"github.com/dotvezz/gochat/chat"
 	"log"
 )
@@ -47,18 +48,18 @@ func (t *tracker) start() {
 	go func() {
 		for {
 			message := <-t.messages
-			t.logger.Printf("%s,%s,%d,%s", message.From, message.To, message.TimeStamp, message.Body)
+			jsonm, _ := json.Marshal(message)
+			t.logger.Println(string(jsonm))
 			deadConnections := make([]int, 0)
 			for i, conn := range t.connections {
 				if err := conn.Send(message); err != nil {
-					// If a Send returns an error, just super-aggressively flag it to be disconnected and removed
+					// If a Send returns an error, just super-aggressively flag it to be removed
 					deadConnections = append(deadConnections, i)
 				}
 			}
 
 			// For flagged dead connections, kill without remorse
 			for _, i := range deadConnections {
-				t.connections[i].Close()
 				t.connections = append(t.connections[:i], t.connections[i+1:]...)
 			}
 		}

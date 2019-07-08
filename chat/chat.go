@@ -27,6 +27,11 @@ type Connection interface {
 	Close()
 }
 
+// Simple interface for serving HTTP requests
+type RestAPI interface {
+	ListenAndServe(addr string)
+}
+
 // Message is a structure that holds the body and metadata of a message sent
 // to or from a client connection
 type Message struct {

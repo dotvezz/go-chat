@@ -8,7 +8,7 @@ import (
 	"github.com/marcusolsson/tui-go"
 	"log"
 	"net"
-	"os"
+	"strings"
 )
 
 func main() {
@@ -53,6 +53,14 @@ func initSubmitHandler(input *tui.Entry, myName *string, conn chat.Connection) f
 			To:   "everyone",
 			Body: e.Text(),
 		}
+
+		if len(m.Body) > 0 && m.Body[0] == '/' {
+			ss := strings.Split(m.Body[1:], " ")
+			if len(ss) > 1 && ss[0] == "nick" {
+				*myName = ss[1]
+			}
+		}
+
 		conn.Send(m)
 		input.SetText("")
 	}
@@ -64,8 +72,7 @@ func initMessageListener(conn chat.Connection, chatView *tui.Box, ui tui.UI) fun
 		for {
 			m, err := conn.Receive()
 			if err != nil {
-				_, _ = fmt.Fprintln(os.Stderr, err)
-				break
+				log.Fatal("disconnected:", err)
 			}
 
 			chatView.Append(tui.NewLabel(fmt.Sprintf(" %s: %s", m.From, m.Body)))
@@ -96,6 +103,7 @@ func initTUI() (*tui.Entry, *tui.Box, tui.UI) {
 		log.Fatal(err)
 	}
 	ui.SetKeybinding("Esc", func() { ui.Quit() })
+	ui.SetKeybinding("Ctrl+c", func() { ui.Quit() })
 
 	return input, chatView, ui
 }

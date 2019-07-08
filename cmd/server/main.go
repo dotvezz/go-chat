@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/dotvezz/gochat/chat"
+	"github.com/dotvezz/gochat/chat/api"
 	"github.com/dotvezz/gochat/chat/connection"
 	"github.com/dotvezz/gochat/chat/server/config"
 	"github.com/dotvezz/gochat/chat/tracker"
@@ -34,6 +35,11 @@ func main() {
 
 	// Load the tracker that handles messages
 	tr := tracker.New(timeStampProvider, logger)
+
+	if conf.APIServerPort != "" {
+		apiServer := api.New(conf.LogFile)
+		apiServer.ListenAndServe(conf.APIServerPort)
+	}
 
 	// Listen for connections and send them to the tracker
 	for {
