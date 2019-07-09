@@ -2,8 +2,8 @@ package transport
 
 import (
 	"encoding/json"
-	"github.com/dotvezz/gochat/chat/domain/message"
-	"github.com/dotvezz/gochat/chat/domain/user"
+	"github.com/dotvezz/go-chat/chat/domain/message"
+	"github.com/dotvezz/go-chat/chat/domain/user"
 	"github.com/gorilla/mux"
 	"net/http"
 )

@@ -1,4 +1,4 @@
-module github.com/dotvezz/gochat
+module github.com/dotvezz/go-chat
 
 go 1.12
 

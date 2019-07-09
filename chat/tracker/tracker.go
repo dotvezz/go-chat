@@ -2,7 +2,7 @@ package tracker
 
 import (
 	"encoding/json"
-	"github.com/dotvezz/gochat/chat"
+	"github.com/dotvezz/go-chat/chat"
 	"log"
 )
 

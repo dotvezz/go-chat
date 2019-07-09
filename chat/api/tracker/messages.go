@@ -3,8 +3,8 @@ package tracker
 // Uses chat.Tracker to Implement business logic related to users
 
 import (
-	"github.com/dotvezz/gochat/chat"
-	"github.com/dotvezz/gochat/chat/domain/message"
+	"github.com/dotvezz/go-chat/chat"
+	"github.com/dotvezz/go-chat/chat/domain/message"
 )
 
 // PostMessage builds an returns an implementation of the message.Post usecase

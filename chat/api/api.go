@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/dotvezz/gochat/chat"
+	"github.com/dotvezz/go-chat/chat"
 	"github.com/gorilla/mux"
 	"net/http"
 )

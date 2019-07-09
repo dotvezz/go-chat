@@ -5,8 +5,8 @@ package log
 import (
 	"bufio"
 	"encoding/json"
-	"github.com/dotvezz/gochat/chat"
-	"github.com/dotvezz/gochat/chat/domain/user"
+	"github.com/dotvezz/go-chat/chat"
+	"github.com/dotvezz/go-chat/chat/domain/user"
 	"os"
 )
 

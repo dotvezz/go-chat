@@ -1,6 +1,6 @@
 package message
 
-import "github.com/dotvezz/gochat/chat"
+import "github.com/dotvezz/go-chat/chat"
 
 // Fetch defines a function which takes an int and returns a message, typically the int is the ID of the message
 type Fetch func(int) (Message, error)

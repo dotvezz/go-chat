@@ -3,8 +3,8 @@ package tracker
 // Uses chat.Tracker to Implement business logic related to users
 
 import (
-	"github.com/dotvezz/gochat/chat"
-	"github.com/dotvezz/gochat/chat/domain/user"
+	"github.com/dotvezz/go-chat/chat"
+	"github.com/dotvezz/go-chat/chat/domain/user"
 )
 
 // KickUser returns an implementation of the user.Kick usecase.

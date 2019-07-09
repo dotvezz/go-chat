@@ -1,10 +1,10 @@
 package api
 
 import (
-	"github.com/dotvezz/gochat/chat"
-	"github.com/dotvezz/gochat/chat/api/log"
-	"github.com/dotvezz/gochat/chat/api/tracker"
-	"github.com/dotvezz/gochat/chat/api/transport"
+	"github.com/dotvezz/go-chat/chat"
+	"github.com/dotvezz/go-chat/chat/api/log"
+	"github.com/dotvezz/go-chat/chat/api/tracker"
+	"github.com/dotvezz/go-chat/chat/api/transport"
 	"net/http"
 )
 
