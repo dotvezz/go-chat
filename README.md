@@ -189,6 +189,10 @@ This project uses third party code through Go Modules:
 - Connection-related Issues
   - As it stands, every user joins with an empty username. A handshake process when 
   initializing a connection, which includes identification, would be good to implement.
+- Design Issues
+  - Messages are serialized to json for transmission, and deserialized on the receiving end.
+  This makes it hard to send messages using a simple telnet client. json can be manually
+  written and sent, but it's unintuitive.
 - API-Related Issues
   - The API uses pseudo-identifiers for `User` and `Message` resources. For users, it's
   the string username. For messages, it's the line which the message is on in the log file.
@@ -197,3 +201,5 @@ This project uses third party code through Go Modules:
   response) would correctly match the line in the logfile the message lands on.
   - Also related to the above: Emptystring is a "valid" username, but it can't be used
   as a resource identifier.
+- General Issues
+  - There's no testing at all. I'll want to add testing, but for now see one of my other projects, [lime](http://github.com/dotvezz/lime/) for testing practice examples.
