@@ -2,16 +2,16 @@ package transport
 
 import (
 	"encoding/json"
-	"github.com/dotvezz/gochat/chat/api/log/users"
-	"github.com/dotvezz/gochat/chat/api/transport/urls"
+	"github.com/dotvezz/gochat/chat/domain/message"
+	"github.com/dotvezz/gochat/chat/domain/user"
 	"github.com/gorilla/mux"
 	"net/http"
 )
 
-// FetchUser returns an http.HandlerFunc which searches the log for a specific user by user name
+// GetUser returns an http.HandlerFunc which searches for a specific user by user name
 // If the user has never sent a message, then the user will not be found.
-// The necessary business logic is injected as a dependency
-func FetchUser(fetch users.FetchUser) http.HandlerFunc {
+// An implementation of the user.Fetch usecase is injected as a dependency
+func GetUser(fetch user.Fetch) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		userName, ok := mux.Vars(request)["userName"]
 		if !ok {
@@ -19,7 +19,7 @@ func FetchUser(fetch users.FetchUser) http.HandlerFunc {
 			return
 		}
 		u, err := fetch(userName)
-		if err == users.NotFound {
+		if err == user.NotFound {
 			http.NotFound(writer, request)
 			return
 		}
@@ -28,7 +28,7 @@ func FetchUser(fetch users.FetchUser) http.HandlerFunc {
 			return
 		}
 
-		jsonu, err := json.Marshal(buildUserResource(u.Name))
+		jsonu, err := json.Marshal(buildUserResource(u))
 		if err != nil {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
 			return
@@ -37,19 +37,20 @@ func FetchUser(fetch users.FetchUser) http.HandlerFunc {
 	}
 }
 
-// FetchUser returns an http.HandlerFunc which returns all users which have ever sent a message
-// The necessary business logic is injected as a dependency
-func FetchAllUsers(fetch users.FetchAllUsers) http.HandlerFunc {
+// GetAllUsers returns an http.HandlerFunc which returns all users who have ever sent a message
+// Pagination is not supported
+// An implementation of the user.FetchAll usecase is injected as a dependency
+func GetAllUsers(fetch user.FetchAll) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		us, err := fetch()
-		if err == users.NotFound {
+		if err == user.NotFound {
 			http.NotFound(writer, request)
 			return
 		}
-		urs := Users{}
+		urs := user.Resources{}
 
 		for _, u := range us {
-			urs.Data = append(urs.Data, buildUserResource(u.Name))
+			urs.Data = append(urs.Data, buildUserResource(u))
 		}
 
 		jsonu, err := json.Marshal(urs)
@@ -62,11 +63,41 @@ func FetchAllUsers(fetch users.FetchAllUsers) http.HandlerFunc {
 	}
 }
 
+// DeleteUser returns an http.HandlerFunc which kicks the specified user
+// An implementation of user.Kick is injected as a dependency
+func DeleteUser(kick user.Kick) http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		userName, ok := mux.Vars(request)["userName"]
+		if !ok {
+			http.NotFound(writer, request)
+			return
+		}
+		ue, err := kick(userName)
+		if err == user.NotFound {
+			http.NotFound(writer, request)
+			return
+		}
+		if err != nil {
+			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		jsonu, err := json.Marshal(ue)
+		if err != nil {
+			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		_, _ = writer.Write(jsonu)
+	}
+}
+
 // buildUserResource takes a userName and builds the Rest Resource, including hypermedia
-func buildUserResource(userName string) User {
-	ur := User{}
-	ur.Data.Name = userName
-	ur.Hypermedia.Self = urls.GetUser(userName)
-	ur.Hypermedia.Messages = urls.GetMessagesOfUser(userName, 0)
+func buildUserResource(u user.User) user.Resource {
+	ur := user.Resource{}
+	ur.Data.Name = u.Name
+	ur.Meta.Online = u.Online
+	ur.Hypermedia.Self = user.GetPath(u.Name)
+	ur.Hypermedia.Messages = message.GetOfUserPath(u.Name, 0)
 	return ur
 }

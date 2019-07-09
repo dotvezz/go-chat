@@ -4,22 +4,29 @@ import (
 	"encoding/json"
 	"github.com/dotvezz/gochat/chat"
 	"net"
+	"strings"
 )
 
-const maxMessageLength = 1 << 8
+// Max message length is 256 bytes
+const maxMessageLength = 256
 
-// New builds and returns a Connection around a net.Conn
-func New(c net.Conn) chat.Connection {
-	conn := new(connection)
-	conn.socket = c
-	return conn
-}
-
+// connection is an implementation of the chat.Connection interface
 type connection struct {
 	userName string
 	socket   net.Conn
 }
 
+// UserName returns the userName as defined by this connection's most recent /nick command
+func (c *connection) UserName() string {
+	return c.userName
+}
+
+// Close terminates this connection
+func (c *connection) Close() {
+	_ = c.socket.Close()
+}
+
+// Send pushes a message over the socket. Returns an error whenever anything goes wrong at all.
 func (c *connection) Send(m chat.Message) error {
 	mjson, err := json.Marshal(m)
 	if err != nil {
@@ -29,6 +36,8 @@ func (c *connection) Send(m chat.Message) error {
 	return err
 }
 
+// Receive returns a message when it comes in over the socket.
+// Returns an error if there were any communication or decoding problems.
 func (c *connection) Receive() (m chat.Message, err error) {
 read:
 	bs := make([]byte, maxMessageLength)
@@ -51,6 +60,13 @@ read:
 	return
 }
 
-func (c *connection) Close() {
-	_ = c.socket.Close()
+// parseCommand checks a message body for commands, such as changing name with /nick
+func (c *connection) parseCommand(body string) {
+	if len(body) > 0 && body[0] == '/' {
+		ss := strings.Split(body[1:], " ")
+		// Check for username change
+		if len(ss) > 1 && ss[0] == "nick" {
+			c.userName = ss[1]
+		}
+	}
 }

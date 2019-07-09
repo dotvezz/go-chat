@@ -17,6 +17,10 @@ type Tracker interface {
 	// Connect accepts a connection and begins tracking it, receiving and
 	// sending messages to other connections on the channel
 	Connect(conn Connection)
+	// Connections returns the currently active connections on the tracker
+	Connections() []Connection
+	// Post accepts a message to send to the tracker
+	Post(message Message)
 }
 
 // Connection is an abstraction for managing connections between client and
@@ -24,6 +28,7 @@ type Tracker interface {
 type Connection interface {
 	Send(message Message) error
 	Receive() (Message, error)
+	UserName() string
 	Close()
 }
 
@@ -36,7 +41,6 @@ type RestAPI interface {
 // to or from a client connection
 type Message struct {
 	From      string
-	To        string
 	Body      string
 	TimeStamp int64
 }

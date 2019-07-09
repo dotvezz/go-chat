@@ -1,37 +1,26 @@
-package messages
+package log
+
+// Uses the log to Implement business logic related to users
 
 import (
 	"bufio"
 	"encoding/json"
 	"github.com/dotvezz/gochat/chat"
+	"github.com/dotvezz/gochat/chat/domain/message"
 	"os"
 )
 
-// The basic business entity for a Message. Essentially a copy of chat.Message
-type Message struct {
-	ID        int
-	From      string
-	To        string
-	Body      string
-	Timestamp int64
-}
-
-// Function signatures for message usecases
-type FetchMessage func(line int) (Message, error)
-type FetchNMessages func(start, length int) ([]Message, error)
-type FetchNByUsername func(username string, start, length int) ([]Message, error)
-
-// Builds and returns a usecase-type function that searches the log for a Message.
+// FetchMessage builds and returns an implementation of the message.Fetch usecase
 // The message IDs correspond directly to their line number in the log file.
-// The returned function will error for parsing failures on the specified line.
-// The returned function will also error for log file access problems.
-func FetchOne(logFilePath string) FetchMessage {
-	return func(targetLine int) (Message, error) {
+// The implementation will error when it is unable to parse the specified line.
+// The implementation will also error for log file access problems.
+func FetchMessage(logFilePath string) message.Fetch {
+	return func(targetLine int) (message.Message, error) {
 		var sc *bufio.Scanner
 		{
 			logFile, err := os.OpenFile(logFilePath, os.O_RDONLY, 0)
 			if err != nil {
-				return Message{}, err
+				return message.Message{}, err
 			}
 			defer logFile.Close()
 			sc = bufio.NewScanner(logFile)
@@ -47,13 +36,12 @@ func FetchOne(logFilePath string) FetchMessage {
 			}
 			err := json.Unmarshal(sc.Bytes(), &cm)
 			if err != nil {
-				return Message{}, err
+				return message.Message{}, err
 			}
 
-			m := Message{
+			m := message.Message{
 				ID:        curLine,
 				From:      cm.From,
-				To:        cm.To,
 				Body:      cm.Body,
 				Timestamp: cm.TimeStamp,
 			}
@@ -61,19 +49,20 @@ func FetchOne(logFilePath string) FetchMessage {
 			return m, nil
 		}
 
-		return Message{}, NotFound
+		return message.Message{}, message.NotFound
 	}
 }
 
-// Builds and returns a usecase-type function that gets all messages from the log.
-// The usecase function will return an error only when  it fails to open the log
-func FetchN(logFilePath string) FetchNMessages {
-	return func(start, length int) ([]Message, error) {
+// FetchMessagesOfSender builds and returns an implementation of the message.FetchN usecase
+// The implementation will pull messages directly from the log
+// The implementation will return an error only when it fails to open the log
+func FetchNMessages(logFilePath string) message.FetchN {
+	return func(start, length int) ([]message.Message, error) {
 		var sc *bufio.Scanner
 		{
 			logFile, err := os.OpenFile(logFilePath, os.O_RDONLY, 0)
 			if err != nil {
-				return make([]Message, 0), err
+				return make([]message.Message, 0), err
 			}
 			defer logFile.Close()
 			sc = bufio.NewScanner(logFile)
@@ -81,7 +70,7 @@ func FetchN(logFilePath string) FetchNMessages {
 
 		// Unmarshal the log into chat.Message because that's the structure which the log is built from
 		cm := chat.Message{}
-		ms := make([]Message, 0)
+		ms := make([]message.Message, 0)
 
 		// Let's be real here, a log file isn't remotely a structure that we should use for this in real life
 		// But it's the data source we've got so let's just go with it.
@@ -96,10 +85,9 @@ func FetchN(logFilePath string) FetchNMessages {
 			if err != nil {
 				continue
 			}
-			ms = append(ms, Message{
+			ms = append(ms, message.Message{
 				ID:        curLine,
 				From:      cm.From,
-				To:        cm.To,
 				Body:      cm.Body,
 				Timestamp: cm.TimeStamp,
 			})
@@ -108,15 +96,16 @@ func FetchN(logFilePath string) FetchNMessages {
 	}
 }
 
-// Builds and returns a usecase-type function that gets all messages from the log.
-// The usecase function will return an error only when  it fails to open the log
-func FetchNBySender(logFilePath string) FetchNByUsername {
-	return func(username string, start, length int) ([]Message, error) {
+// FetchMessagesOfSender builds and returns an implementation of the message.FetchNByUsername usecase
+// The implementation function searches the log and returns messages where the given userName is the sender.
+// The implementation will return an error only when it fails to open the log
+func FetchMessagesOfSender(logFilePath string) message.FetchNByUsername {
+	return func(username string, start, length int) ([]message.Message, error) {
 		var sc *bufio.Scanner
 		{
 			logFile, err := os.OpenFile(logFilePath, os.O_RDONLY, 0)
 			if err != nil {
-				return make([]Message, 0), err
+				return make([]message.Message, 0), err
 			}
 			defer logFile.Close()
 			sc = bufio.NewScanner(logFile)
@@ -124,7 +113,7 @@ func FetchNBySender(logFilePath string) FetchNByUsername {
 
 		// Unmarshal the log into chat.Message because that's the structure which the log is built from
 		cm := chat.Message{}
-		ms := make([]Message, 0)
+		ms := make([]message.Message, 0)
 
 		counter := 0
 		// Let's be real here, a log file isn't remotely a structure that we should use for this in real life
@@ -144,10 +133,9 @@ func FetchNBySender(logFilePath string) FetchNByUsername {
 			if err != nil {
 				continue
 			}
-			ms = append(ms, Message{
+			ms = append(ms, message.Message{
 				ID:        curLine,
 				From:      cm.From,
-				To:        cm.To,
 				Body:      cm.Body,
 				Timestamp: cm.TimeStamp,
 			})

@@ -3,12 +3,11 @@ package main
 import (
 	"fmt"
 	"github.com/dotvezz/gochat/chat"
-	"github.com/dotvezz/gochat/chat/client/config"
 	"github.com/dotvezz/gochat/chat/connection"
+	"github.com/dotvezz/gochat/chat/domain/client/config"
 	"github.com/marcusolsson/tui-go"
 	"log"
 	"net"
-	"strings"
 	"time"
 )
 
@@ -24,14 +23,13 @@ func main() {
 	}
 
 	// Set the connection
-	conn := connection.New(nc)
+	conn := connection.NewClient(nc)
 
 	// Initialize the TUI
 	input, chatView, ui := initTUI()
 
 	// Build the submit handler, injecting the Input, name pointer, and Connection
-	myName := new(string)
-	handleSubmit := initSubmitHandler(input, myName, conn)
+	handleSubmit := initSubmitHandler(input, conn)
 	// Set the submit handler
 	input.OnSubmit(handleSubmit)
 
@@ -47,19 +45,11 @@ func main() {
 }
 
 // Initialize the handler function for the input's Submit action
-func initSubmitHandler(input *tui.Entry, myName *string, conn chat.Connection) func(e *tui.Entry) {
+func initSubmitHandler(input *tui.Entry, conn chat.Connection) func(e *tui.Entry) {
 	return func(e *tui.Entry) {
 		m := chat.Message{
-			From: *myName,
-			To:   "everyone",
+			From: conn.UserName(),
 			Body: e.Text(),
-		}
-
-		if len(m.Body) > 0 && m.Body[0] == '/' {
-			ss := strings.Split(m.Body[1:], " ")
-			if len(ss) > 1 && ss[0] == "nick" {
-				*myName = ss[1]
-			}
 		}
 
 		conn.Send(m)

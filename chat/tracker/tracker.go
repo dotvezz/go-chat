@@ -26,7 +26,18 @@ type tracker struct {
 	connections []chat.Connection
 }
 
-// Subscribes the connection to the message channel
+// Post accepts a message and puts it in the channel
+func (t *tracker) Post(message chat.Message) {
+	message.TimeStamp = t.timeStamp()
+	t.messages <- message
+}
+
+// Connections returns the current active connections
+func (t *tracker) Connections() []chat.Connection {
+	return t.connections
+}
+
+// Connect subscribes the connection to the message channel
 func (t *tracker) Connect(conn chat.Connection) {
 	t.connections = append(t.connections, conn)
 	go func() {

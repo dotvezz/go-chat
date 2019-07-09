@@ -6,11 +6,11 @@ import (
 	"net/http"
 )
 
-func New(logFilePath string) chat.RestAPI {
+func New(logFilePath string, tracker chat.Tracker) chat.RestAPI {
 	router := mux.NewRouter()
 
-	for _, endpoint := range initRoutes(logFilePath) {
-		router.HandleFunc(endpoint.path, endpoint.handler)
+	for _, endpoint := range initRoutes(logFilePath, tracker) {
+		router.HandleFunc(endpoint.path, endpoint.handler).Methods(endpoint.method)
 	}
 
 	return &restAPI{
