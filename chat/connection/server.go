@@ -6,7 +6,7 @@ import (
 	"net"
 )
 
-// New builds and returns a Connection around a net.Conn
+// NewServer builds and returns a Connection around a net.Conn
 func NewServer(c net.Conn) chat.Connection {
 	clientConn := new(serverConnection)
 	clientConn.socket = c
@@ -18,6 +18,8 @@ type serverConnection struct {
 }
 
 // Receive returns a message when it comes in over the socket.
+// Also handles commands, which differentiates this from the connection and clientConnection
+// implementations of chat.Connection
 // Returns an error if there were any communication or decoding problems.
 func (c *serverConnection) Receive() (m chat.Message, err error) {
 read:

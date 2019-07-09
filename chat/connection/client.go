@@ -6,7 +6,7 @@ import (
 	"net"
 )
 
-// New builds and returns a Connection around a net.Conn
+// NewClient builds and returns a Connection around a net.Conn
 func NewClient(c net.Conn) chat.Connection {
 	clientConn := new(clientConnection)
 	clientConn.socket = c
@@ -18,6 +18,8 @@ type clientConnection struct {
 }
 
 // Send pushes a message over the socket. Returns an error whenever anything goes wrong at all.
+// Also handles commands, which differentiates this from the connection and serverConnection implementations
+// of chat.Connection
 func (c *clientConnection) Send(m chat.Message) error {
 	mjson, err := json.Marshal(m)
 	if err != nil {

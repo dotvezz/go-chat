@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-// FetchAllUsers builds and returns an implementation of the user.Fetch usecase
+// FetchUser builds and returns an implementation of the user.Fetch usecase
 // The implementation scans the log for the given username
 // If any user has sent a message while using that name, it will return a User,
 // Otherwise it will return an error

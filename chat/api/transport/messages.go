@@ -97,8 +97,8 @@ func PostMessage(post message.Post) http.HandlerFunc {
 }
 
 // GetMessagesOfUser returns an http.HandlerFunc which searches messages from a specific user by user name
-// An implementation of the message.FetchNByUsername usecase is injected as a dependency
-func GetMessagesOfUser(fetch message.FetchNByUsername) http.HandlerFunc {
+// An implementation of the message.FetchNByString usecase is injected as a dependency
+func GetMessagesOfUser(fetch message.FetchNByString) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		userName, ok := mux.Vars(request)["userName"]
 		if !ok {

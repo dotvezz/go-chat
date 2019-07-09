@@ -53,7 +53,7 @@ func FetchMessage(logFilePath string) message.Fetch {
 	}
 }
 
-// FetchMessagesOfSender builds and returns an implementation of the message.FetchN usecase
+// FetchNMessages builds and returns an implementation of the message.FetchN usecase
 // The implementation will pull messages directly from the log
 // The implementation will return an error only when it fails to open the log
 func FetchNMessages(logFilePath string) message.FetchN {
@@ -96,10 +96,10 @@ func FetchNMessages(logFilePath string) message.FetchN {
 	}
 }
 
-// FetchMessagesOfSender builds and returns an implementation of the message.FetchNByUsername usecase
+// FetchMessagesOfSender builds and returns an implementation of the message.FetchNByString usecase
 // The implementation function searches the log and returns messages where the given userName is the sender.
 // The implementation will return an error only when it fails to open the log
-func FetchMessagesOfSender(logFilePath string) message.FetchNByUsername {
+func FetchMessagesOfSender(logFilePath string) message.FetchNByString {
 	return func(username string, start, length int) ([]message.Message, error) {
 		var sc *bufio.Scanner
 		{

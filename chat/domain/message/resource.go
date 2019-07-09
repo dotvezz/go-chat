@@ -1,6 +1,6 @@
 package message
 
-// The basic Rest structure representing a Message resource
+// Resource is the basic Rest structure representing a Message resource
 type Resource struct {
 	ID   int
 	Data struct {
@@ -16,7 +16,7 @@ type Resource struct {
 	}
 }
 
-// The basic Rest response representing a collection of users
+// Resources is the basic Rest response representing a collection of users
 type Resources struct {
 	Data       []Resource
 	Hypermedia struct {

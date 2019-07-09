@@ -1,6 +1,6 @@
 package user
 
-// The basic Rest structure representing a User resource
+// Resource is the basic Rest structure representing a User resource
 type Resource struct {
 	Data struct {
 		Name string
@@ -14,7 +14,7 @@ type Resource struct {
 	}
 }
 
-// The basic Rest response representing a collection of Users
+// Resources is the basic Rest response representing a collection of Users
 type Resources struct {
 	Data []Resource
 }
