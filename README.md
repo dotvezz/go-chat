@@ -1,4 +1,4 @@
-#go-chat
+# go-chat
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/dotvezz/go-chat)](https://goreportcard.com/report/github.com/dotvezz/go-chat)
 
@@ -144,6 +144,34 @@ type Config struct {
 ```
 
 The default is to connect to `localhost:1026`.
+
+## Approach
+
+### Code Structure
+
+The API is built loosely following 
+"[Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)" 
+principles. Usecase types are defined in the `domain` package, and each type is 
+implemented by a package which is named after the core implementation dependency.
+For example, the `messages.Post` usecase is implemented by a function which uses
+the chat tracker, and is therefore in a package named `tracker`.
+
+The Chat Server is built primarily around two interfaces: `chat.Tracker` and `chat.Connection`.
+The `chat.Tracker` is implemented with a single `chan` that all messages enter into. Every
+Connection to the server can write messages to that channel, and the tracker distributes all
+messages from the channel to every live connection.
+
+The Chat Client is built primarily around the `chat.Connection` interface. It is the same 
+`chat.Connection` that the Server uses, but has a slightly different implementation for
+handling the `/nick name` command.
+
+### Dependency Injection
+
+The API uses dependency injection patterns for decoupling from the rest of the app. Usecases
+are defined for business logic operations, and each usecase is implemented through either
+the `chat.Tracker` or the log file. Implementations are injected where needed, including for
+http handlers. If we wanted to remove the logfile requirement from some API operations, only
+the implementation injected into the http handler needs to be updated.
 
 ## Third-Party Code
 
