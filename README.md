@@ -141,8 +141,9 @@ type Config struct {
 	// The port to connect on, must begin with ":"
 	Port string `validate:"required,startswith=:"`
 }
-
 ```
+
+The default is to connect to `localhost:1026`.
 
 ## Third-Party Code
 
@@ -157,7 +158,14 @@ This project uses third party code through Go Modules:
     
 ## Issues
 
-- As it stands, every user joins with an empty username. This breaks the API
-endpoints which use usernames, since emptystring can't be used as a resource identifier.
-- The empty username is also just silly in general, a handshake process when initializing 
-a connection, which includes identification, would be good to implement.
+- Connection-related Issues
+  - As it stands, every user joins with an empty username. A handshake process when 
+  initializing a connection, which includes identification, would be good to implement.
+- API-Related Issues
+  - The API uses pseudo-identifiers for `User` and `Message` resources. For users, it's
+  the string username. For messages, it's the line which the message is on in the log file.
+  - Related to the above: The "Post Message" API responds with Status Code `202 Accepted`,
+  this is because of the difficulty guaranteeing that the ID (which should be in a `200 OK`
+  response) would correctly match the line in the logfile the message lands on.
+  - Also related to the above: Emptystring is a "valid" username, but it can't be used
+  as a resource identifier.
