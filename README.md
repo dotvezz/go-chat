@@ -44,7 +44,7 @@ To load a new config, run the server with the `--conf={conf_path}` flag. The con
 json format.
 
 Note: For Windows, there is no default log output, so the log must be configured.
-(Playing it safe since I don't know if `os.STDOUT.Fd()` works on Windows. I'd guess
+(Playing it safe since I don't know if `os.Stdout.Fd()` works on Windows. I'd guess
 it does, but not totally sure)
 
 ## API
