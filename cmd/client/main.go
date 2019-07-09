@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/dotvezz/gochat/chat"
-	"github.com/dotvezz/gochat/chat/connection"
-	"github.com/dotvezz/gochat/chat/domain/client/config"
+	"github.com/dotvezz/go-chat/chat"
+	"github.com/dotvezz/go-chat/chat/connection"
+	"github.com/dotvezz/go-chat/chat/domain/client/config"
 	"github.com/marcusolsson/tui-go"
 	"log"
 	"net"

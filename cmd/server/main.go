@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/dotvezz/gochat/chat"
-	"github.com/dotvezz/gochat/chat/api"
-	"github.com/dotvezz/gochat/chat/connection"
-	"github.com/dotvezz/gochat/chat/domain/server/config"
-	"github.com/dotvezz/gochat/chat/tracker"
+	"github.com/dotvezz/go-chat/chat"
+	"github.com/dotvezz/go-chat/chat/api"
+	"github.com/dotvezz/go-chat/chat/connection"
+	"github.com/dotvezz/go-chat/chat/domain/server/config"
+	"github.com/dotvezz/go-chat/chat/tracker"
 	"log"
 	"net"
 	"os"

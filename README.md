@@ -8,12 +8,12 @@ for interacting with messages and users.
 
 ## Server
 
-The server can be run in several ways
+The server can be run in a few ways
 
-- `go install github.com/dotvezz/go-chat/cmd/server`
-  - This installs a binary called `server` to your `$GOPATH/bin` directory.
 - Clone this repository and `go run go-chat/cmd/server/main.go`
 - Clone this repository and build `go-chat/cmd/server/main.go`
+
+Every new user joins with an empty username. the `/nick` command changes usernames.
 
 ### Configuration 
 
@@ -57,6 +57,7 @@ The API has the following endpoints available, with a few example requests and r
     - Gets a paginated list of messages sent by a user
 - `GET: {host}/user/{userName}`
     - Gets a specific user
+    - Includes whether the user is online
 ```json
 # GET: /user/ben
 {
@@ -78,6 +79,7 @@ The API has the following endpoints available, with a few example requests and r
 - `GET: {host}/user/`
     - Gets a list of all users who have been on the server
 - `GET: {host}/message/{messageID}`
+    - Gets a specific message
 ```json
 # GET: /message/52
 {
@@ -96,8 +98,6 @@ The API has the following endpoints available, with a few example requests and r
 }
 
 ```
-
-    - Gets a specific message
 - `GET: {host}/message/`
     - Gets a paginated list of messages
 - `POST: {host}/message/`
@@ -114,3 +114,46 @@ The API has the following endpoints available, with a few example requests and r
 }
 
 ```
+
+## Client
+
+The client, like the server, can be run in a few ways:
+
+- Clone this repository and `go run go-chat/cmd/client/main.go`
+- Clone this repository and build `go-chat/cmd/client/main.go`
+
+The client is a thin TUI with just a message box and input box. Ctrl+C or Esc will close
+the TUI.
+
+### Config
+
+The client has a simple config:
+
+```go
+// Config holds the configuration values for a chat client
+type Config struct {
+	// The address to connect to
+	Host string `validate:"required"`
+	// The port to connect on, must begin with ":"
+	Port string `validate:"required,startswith=:"`
+}
+
+```
+
+## Third-Party Code
+
+This project uses third party code through Go Modules:
+
+- github.com/gorilla/mux
+    - For setting up API routing
+- github.com/marcusolsson/tui-go
+    - For the client TUI
+- gopkg.in/go-playground/validator.v9
+    - For validation of configuration values
+    
+## Issues
+
+- As it stands, every user joins with an empty username. This breaks the API
+endpoints which use usernames, since emptystring can't be used as a resource identifier.
+- The empty username is also just silly in general, a handshake process when initializing 
+a connection, which includes identification, would be good to implement.

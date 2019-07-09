@@ -3,9 +3,8 @@ package config
 // New returns a new Config with default values
 func New() Config {
 	return Config{
-		Host:     "localhost",
-		Port:     ":1026",
-		UserName: "Someone",
+		Host: "localhost",
+		Port: ":1026",
 	}
 }
 
@@ -15,6 +14,4 @@ type Config struct {
 	Host string `validate:"required"`
 	// The port to connect on, must begin with ":"
 	Port string `validate:"required,startswith=:"`
-	// The username to display as the sender of messages
-	UserName string `validate:"required"`
 }
