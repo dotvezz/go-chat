@@ -26,7 +26,7 @@ func GetMessage(fetch message.Fetch) http.HandlerFunc {
 			return
 		}
 		m, err := fetch(id)
-		if err == message.NotFound {
+		if err == message.ErrNotFound {
 			http.NotFound(writer, request)
 			return
 		}
@@ -78,6 +78,9 @@ func GetNMessages(fetch message.FetchN) http.HandlerFunc {
 	}
 }
 
+// PostMessage returns an http.HandlerFunc which accepts a message resource in json format and posts
+// that message to the tracker
+// An implementation of the message.Post usecase is injected as a dependency
 func PostMessage(post message.Post) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		dec := json.NewDecoder(request.Body)

@@ -32,7 +32,7 @@ type Connection interface {
 	Close()
 }
 
-// Simple interface for serving HTTP requests
+// RestAPI is a Simple interface for serving HTTP requests
 type RestAPI interface {
 	ListenAndServe(addr string)
 }
@@ -45,7 +45,7 @@ type Message struct {
 	TimeStamp int64
 }
 
-// Load loads the config file, validates its contents, and hydrates the struct.
+// LoadConfig loads the config file, validates its contents, and hydrates it into the conf value parameter.
 // Calls log.Fatal for any failures
 func LoadConfig(conf interface{}) {
 	// Parse flags used

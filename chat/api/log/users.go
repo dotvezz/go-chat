@@ -40,7 +40,7 @@ func FetchUser(logFilePath string, isOnline user.GetBool) user.Fetch {
 			}
 		}
 
-		return user.User{}, user.NotFound
+		return user.User{}, user.ErrNotFound
 	}
 }
 

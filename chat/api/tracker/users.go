@@ -18,7 +18,7 @@ func KickUser(tracker chat.Tracker) user.Kick {
 				return user.User{Name: userName, Online: false}, nil
 			}
 		}
-		return user.User{}, user.NotFound
+		return user.User{}, user.ErrNotFound
 	}
 }
 

@@ -19,7 +19,7 @@ func GetUser(fetch user.Fetch) http.HandlerFunc {
 			return
 		}
 		u, err := fetch(userName)
-		if err == user.NotFound {
+		if err == user.ErrNotFound {
 			http.NotFound(writer, request)
 			return
 		}
@@ -43,7 +43,7 @@ func GetUser(fetch user.Fetch) http.HandlerFunc {
 func GetAllUsers(fetch user.FetchAll) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		us, err := fetch()
-		if err == user.NotFound {
+		if err == user.ErrNotFound {
 			http.NotFound(writer, request)
 			return
 		}
@@ -73,7 +73,7 @@ func DeleteUser(kick user.Kick) http.HandlerFunc {
 			return
 		}
 		ue, err := kick(userName)
-		if err == user.NotFound {
+		if err == user.ErrNotFound {
 			http.NotFound(writer, request)
 			return
 		}

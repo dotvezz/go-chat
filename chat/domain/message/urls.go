@@ -22,7 +22,7 @@ func GetPath(id int) string {
 	return fmt.Sprintf(Path, id)
 }
 
-// GetListPAth takes a pagination parameter and returns a Rest path to a list of message resources
+// GetListPath takes a pagination parameter and returns a Rest path to a list of message resources
 func GetListPath(first int) string {
 	return fmt.Sprintf(ListPath, first)
 }

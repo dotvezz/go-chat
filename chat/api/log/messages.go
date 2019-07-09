@@ -49,7 +49,7 @@ func FetchMessage(logFilePath string) message.Fetch {
 			return m, nil
 		}
 
-		return message.Message{}, message.NotFound
+		return message.Message{}, message.ErrNotFound
 	}
 }
 
