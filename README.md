@@ -10,6 +10,8 @@ for interacting with messages and users.
 
 The server can be run in a few ways
 
+- `go install github.com/dotvezz/go-chat/cmd/server`
+  - This installs a binary called `server` to your `$GOPATH/bin` directory
 - Clone this repository and `go run go-chat/cmd/server/main.go`
 - Clone this repository and build `go-chat/cmd/server/main.go`
 
@@ -119,6 +121,8 @@ The API has the following endpoints available, with a few example requests and r
 
 The client, like the server, can be run in a few ways:
 
+- `go install github.com/dotvezz/go-chat/cmd/client`
+  - This installs a binary called `client` to your `$GOPATH/bin` directory
 - Clone this repository and `go run go-chat/cmd/client/main.go`
 - Clone this repository and build `go-chat/cmd/client/main.go`
 
